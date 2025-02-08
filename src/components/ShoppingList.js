@@ -1,36 +1,40 @@
 import React, { useState } from "react";
-import Item from "./Item";
+import Header from "./components/Header";
+import ShoppingList from "./components/ShoppingList";
+import ItemForm from "./components/ItemForm";
+import "./App.css";
 
-function ShoppingList({ items }) {
-  const [selectedCategory, setSelectedCategory] = useState("All");
+function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [items, setItems] = useState([
+    { id: 1, name: "Milk", category: "Dairy", inCart: false },
+    { id: 2, name: "Bread", category: "Bakery", inCart: false },
+    { id: 3, name: "Eggs", category: "Dairy", inCart: false },
+  ]);
 
-  function handleCategoryChange(event) {
-    setSelectedCategory(event.target.value);
+  function handleToggleMode() {
+    setIsDarkMode((prevMode) => !prevMode);
   }
 
-  const itemsToDisplay = items.filter((item) => {
-    if (selectedCategory === "All") return true;
+  function handleAddItem(newItem) {
+    setItems([...items, newItem]);
+  }
 
-    return item.category === selectedCategory;
-  });
+  function handleToggleCart(itemId) {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, inCart: !item.inCart } : item
+      )
+    );
+  }
 
   return (
-    <div className="ShoppingList">
-      <div className="Filter">
-        <select name="filter" onChange={handleCategoryChange}>
-          <option value="All">Filter by category</option>
-          <option value="Produce">Produce</option>
-          <option value="Dairy">Dairy</option>
-          <option value="Dessert">Dessert</option>
-        </select>
-      </div>
-      <ul className="Items">
-        {itemsToDisplay.map((item) => (
-          <Item key={item.id} name={item.name} category={item.category} />
-        ))}
-      </ul>
+    <div className={isDarkMode ? "dark" : "light"}>
+      <Header isDarkMode={isDarkMode} onToggleMode={handleToggleMode} />
+      <ItemForm onAddItem={handleAddItem} />
+      <ShoppingList items={items} onToggleCart={handleToggleCart} />
     </div>
   );
 }
 
-export default ShoppingList;
+export default App;

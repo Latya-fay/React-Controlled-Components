@@ -1,23 +1,29 @@
 import React, { useState } from "react";
+import Filter from "./Filter";
 import ShoppingList from "./ShoppingList";
-import itemData from "../data/items";
+import ItemForm from "./ItemForm";
+import itemsData from "../data/items";
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [items, setItems] = useState(itemsData);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
 
-  function onDarkModeClick() {
-    setIsDarkMode((isDarkMode) => !isDarkMode);
+  function handleAddItem(newItem) {
+    setItems([...items, newItem]); // Update state correctly
   }
 
   return (
-    <div className={"App " + (isDarkMode ? "dark" : "light")}>
-      <header>
-        <h2>Shopster</h2>
-        <button onClick={onDarkModeClick}>
-          {isDarkMode ? "Dark" : "Light"} Mode
-        </button>
-      </header>
-      <ShoppingList items={itemData} />
+    <div className="App">
+      <h1>Shopping List</h1>
+      <ItemForm onItemFormSubmit={handleAddItem} />
+      <Filter
+        search={search}
+        onSearchChange={setSearch}
+        category={category}
+        onCategoryChange={setCategory}
+      />
+      <ShoppingList items={items} search={search} category={category} />
     </div>
   );
 }
